@@ -1,0 +1,13 @@
+### IDE ###
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+
+### OS ###
+.DS_Store
+Thumbs.db
+
+# backend/, frontend/ 각각에 자체 .gitignore가 있습니다
+# (build 산출물, node_modules, 로컬 DB 파일, .env 등)
