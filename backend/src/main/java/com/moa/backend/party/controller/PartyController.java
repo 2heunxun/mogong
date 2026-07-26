@@ -1,10 +1,12 @@
-package com.moa.backend.party;
+package com.moa.backend.party.controller;
 
 import com.moa.backend.global.dto.PageResponse;
 import com.moa.backend.party.dto.PartyDetailResponse;
 import com.moa.backend.party.dto.PartyMemberResponse;
 import com.moa.backend.party.dto.PartyRequest;
 import com.moa.backend.party.dto.PartySummaryResponse;
+import com.moa.backend.party.entity.StudyParty;
+import com.moa.backend.party.service.PartyService;
 import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;

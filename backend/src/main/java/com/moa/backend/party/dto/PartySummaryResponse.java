@@ -1,6 +1,6 @@
 package com.moa.backend.party.dto;
 
-import com.moa.backend.party.StudyParty;
+import com.moa.backend.party.entity.StudyParty;
 
 public record PartySummaryResponse(
         Long id,

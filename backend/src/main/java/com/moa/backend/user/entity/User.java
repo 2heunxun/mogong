@@ -1,4 +1,4 @@
-package com.moa.backend.user;
+package com.moa.backend.user.entity;
 
 import com.moa.backend.global.jpa.BaseTimeEntity;
 import jakarta.persistence.Column;

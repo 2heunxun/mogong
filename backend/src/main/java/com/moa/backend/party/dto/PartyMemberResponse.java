@@ -1,6 +1,6 @@
 package com.moa.backend.party.dto;
 
-import com.moa.backend.party.PartyMember;
+import com.moa.backend.party.entity.PartyMember;
 import java.time.LocalDateTime;
 
 public record PartyMemberResponse(

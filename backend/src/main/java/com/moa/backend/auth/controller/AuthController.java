@@ -1,9 +1,10 @@
-package com.moa.backend.auth;
+package com.moa.backend.auth.controller;
 
 import com.moa.backend.auth.dto.DevLoginRequest;
 import com.moa.backend.auth.dto.KakaoLoginRequest;
 import com.moa.backend.auth.dto.RefreshRequest;
 import com.moa.backend.auth.dto.TokenResponse;
+import com.moa.backend.auth.service.AuthService;
 import com.moa.backend.global.config.KakaoProperties;
 import jakarta.validation.Valid;
 import java.net.URLEncoder;

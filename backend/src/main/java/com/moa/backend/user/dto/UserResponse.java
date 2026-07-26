@@ -1,6 +1,6 @@
 package com.moa.backend.user.dto;
 
-import com.moa.backend.user.User;
+import com.moa.backend.user.entity.User;
 
 public record UserResponse(
         Long id,

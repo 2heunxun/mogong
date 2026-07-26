@@ -1,8 +1,10 @@
-package com.moa.backend.user;
+package com.moa.backend.user.service;
 
 import com.moa.backend.global.exception.BusinessException;
 import com.moa.backend.global.exception.ErrorCode;
 import com.moa.backend.user.dto.UserResponse;
+import com.moa.backend.user.entity.User;
+import com.moa.backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

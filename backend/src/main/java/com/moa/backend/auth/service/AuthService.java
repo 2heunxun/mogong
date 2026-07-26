@@ -1,14 +1,17 @@
-package com.moa.backend.auth;
+package com.moa.backend.auth.service;
 
+import com.moa.backend.auth.client.KakaoOAuthClient;
 import com.moa.backend.auth.dto.KakaoTokenResponse;
 import com.moa.backend.auth.dto.KakaoUserInfoResponse;
 import com.moa.backend.auth.dto.TokenResponse;
+import com.moa.backend.auth.entity.RefreshToken;
+import com.moa.backend.auth.repository.RefreshTokenRepository;
 import com.moa.backend.global.config.AppProperties;
 import com.moa.backend.global.exception.BusinessException;
 import com.moa.backend.global.exception.ErrorCode;
 import com.moa.backend.global.security.JwtProvider;
-import com.moa.backend.user.User;
-import com.moa.backend.user.UserRepository;
+import com.moa.backend.user.entity.User;
+import com.moa.backend.user.repository.UserRepository;
 import com.moa.backend.user.dto.UserResponse;
 import io.jsonwebtoken.Claims;
 import java.time.Duration;

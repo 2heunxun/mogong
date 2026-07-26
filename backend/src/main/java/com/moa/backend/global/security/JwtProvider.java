@@ -1,7 +1,7 @@
 package com.moa.backend.global.security;
 
 import com.moa.backend.global.config.JwtProperties;
-import com.moa.backend.user.User;
+import com.moa.backend.user.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;

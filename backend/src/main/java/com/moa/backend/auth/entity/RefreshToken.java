@@ -1,4 +1,4 @@
-package com.moa.backend.auth;
+package com.moa.backend.auth.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

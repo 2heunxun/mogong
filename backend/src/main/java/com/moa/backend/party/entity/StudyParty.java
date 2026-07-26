@@ -1,9 +1,9 @@
-package com.moa.backend.party;
+package com.moa.backend.party.entity;
 
 import com.moa.backend.global.exception.BusinessException;
 import com.moa.backend.global.exception.ErrorCode;
 import com.moa.backend.global.jpa.BaseTimeEntity;
-import com.moa.backend.user.User;
+import com.moa.backend.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

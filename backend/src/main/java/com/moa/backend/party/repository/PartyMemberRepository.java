@@ -1,5 +1,6 @@
-package com.moa.backend.party;
+package com.moa.backend.party.repository;
 
+import com.moa.backend.party.entity.PartyMember;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

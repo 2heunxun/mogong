@@ -1,4 +1,4 @@
-package com.moa.backend.auth;
+package com.moa.backend.auth.client;
 
 import com.moa.backend.auth.dto.KakaoTokenResponse;
 import com.moa.backend.auth.dto.KakaoUserInfoResponse;

@@ -1,4 +1,4 @@
-package com.moa.backend.party;
+package com.moa.backend.party.service;
 
 import com.moa.backend.global.exception.BusinessException;
 import com.moa.backend.global.exception.ErrorCode;
@@ -6,8 +6,13 @@ import com.moa.backend.party.dto.PartyDetailResponse;
 import com.moa.backend.party.dto.PartyMemberResponse;
 import com.moa.backend.party.dto.PartyRequest;
 import com.moa.backend.party.dto.PartySummaryResponse;
-import com.moa.backend.user.User;
-import com.moa.backend.user.UserService;
+import com.moa.backend.party.entity.PartyMember;
+import com.moa.backend.party.entity.StudyParty;
+import com.moa.backend.party.repository.PartyMemberRepository;
+import com.moa.backend.party.repository.StudyPartyRepository;
+import com.moa.backend.party.repository.StudyPartySpecs;
+import com.moa.backend.user.entity.User;
+import com.moa.backend.user.service.UserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
