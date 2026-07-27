@@ -37,17 +37,37 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false, length = 20)
     private Role role;
 
+    @Column(name = "class_no")
+    private Integer classNo;
+
+    @Column(name = "team_no")
+    private Integer teamNo;
+
+    @Column(name = "real_name", length = 20)
+    private String realName;
+
+    @Column(name = "profile_completed", nullable = false)
+    private boolean profileCompleted;
+
     @Builder
     private User(Long kakaoId, String nickname, String profileImageUrl, Role role) {
         this.kakaoId = kakaoId;
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
         this.role = role == null ? Role.USER : role;
+        this.profileCompleted = false;
     }
 
     public void updateProfile(String nickname, String profileImageUrl) {
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
+    }
+
+    public void completeOnboarding(Integer classNo, Integer teamNo, String realName) {
+        this.classNo = classNo;
+        this.teamNo = teamNo;
+        this.realName = realName;
+        this.profileCompleted = true;
     }
 
     public boolean isAdmin() {

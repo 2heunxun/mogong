@@ -2,6 +2,7 @@ package com.moa.backend.user.service;
 
 import com.moa.backend.global.exception.BusinessException;
 import com.moa.backend.global.exception.ErrorCode;
+import com.moa.backend.user.dto.OnboardingRequest;
 import com.moa.backend.user.dto.UserResponse;
 import com.moa.backend.user.entity.User;
 import com.moa.backend.user.repository.UserRepository;
@@ -23,5 +24,12 @@ public class UserService {
     public User getUserOrThrow(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    @Transactional
+    public UserResponse completeOnboarding(Long userId, OnboardingRequest request) {
+        User user = getUserOrThrow(userId);
+        user.completeOnboarding(request.classNo(), request.teamNo(), request.realName());
+        return UserResponse.from(user);
     }
 }

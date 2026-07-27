@@ -15,3 +15,11 @@ export const deleteParty = (id) => api.delete(`/api/parties/${id}`);
 export const joinParty = (id) => api.post(`/api/parties/${id}/join`);
 
 export const leaveParty = (id) => api.delete(`/api/parties/${id}/leave`);
+
+export const fetchMyParties = () => api.get('/api/parties/mine').then((res) => res.data);
+
+export const fetchJoinRequests = (id) => api.get(`/api/parties/${id}/join-requests`).then((res) => res.data);
+
+export const approveJoinRequest = (id, memberId) => api.post(`/api/parties/${id}/join-requests/${memberId}/approve`);
+
+export const rejectJoinRequest = (id, memberId) => api.post(`/api/parties/${id}/join-requests/${memberId}/reject`);

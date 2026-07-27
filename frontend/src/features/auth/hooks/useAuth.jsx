@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { api } from '../../../shared/api/client';
 import { clearTokens, getRefreshToken, setAccessToken, setRefreshToken } from '../../../shared/api/tokenStore';
+import { completeOnboarding as completeOnboardingRequest } from '../../user/api/user';
 
 const AuthContext = createContext(null);
 
@@ -56,6 +57,12 @@ export function AuthProvider({ children }) {
     setUser(null);
   }, []);
 
+  const completeOnboarding = useCallback(async (payload) => {
+    const updatedUser = await completeOnboardingRequest(payload);
+    setUser(updatedUser);
+    return updatedUser;
+  }, []);
+
   const value = {
     user,
     initializing,
@@ -63,6 +70,7 @@ export function AuthProvider({ children }) {
     loginWithKakaoCode,
     devLogin,
     logout,
+    completeOnboarding,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

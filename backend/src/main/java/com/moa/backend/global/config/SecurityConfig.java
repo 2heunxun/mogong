@@ -37,6 +37,7 @@ public class SecurityConfig {
                         .accessDeniedHandler((req, res, ex) -> res.sendError(HttpServletResponse.SC_FORBIDDEN)))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/parties/mine").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/parties", "/api/parties/*", "/api/parties/*/members").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()

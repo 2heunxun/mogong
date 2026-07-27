@@ -3,6 +3,8 @@ package com.moa.backend.party.entity;
 import com.moa.backend.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -39,14 +41,31 @@ public class PartyMember {
     @Column(name = "joined_at", nullable = false, updatable = false)
     private LocalDateTime joinedAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Status status;
+
     @Builder
-    private PartyMember(StudyParty party, User user) {
+    private PartyMember(StudyParty party, User user, Status status) {
         this.party = party;
         this.user = user;
+        this.status = status == null ? Status.PENDING : status;
     }
 
     @PrePersist
     void prePersist() {
         this.joinedAt = LocalDateTime.now();
+    }
+
+    public void approve() {
+        this.status = Status.APPROVED;
+    }
+
+    public void reject() {
+        this.status = Status.REJECTED;
+    }
+
+    public enum Status {
+        PENDING, APPROVED, REJECTED
     }
 }

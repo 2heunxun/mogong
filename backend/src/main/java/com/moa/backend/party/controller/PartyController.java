@@ -1,7 +1,9 @@
 package com.moa.backend.party.controller;
 
 import com.moa.backend.global.dto.PageResponse;
+import com.moa.backend.party.dto.MyPartiesResponse;
 import com.moa.backend.party.dto.PartyDetailResponse;
+import com.moa.backend.party.dto.PartyJoinRequestResponse;
 import com.moa.backend.party.dto.PartyMemberResponse;
 import com.moa.backend.party.dto.PartyRequest;
 import com.moa.backend.party.dto.PartySummaryResponse;
@@ -45,6 +47,11 @@ public class PartyController {
         return PageResponse.of(partyService.list(category, keyword, statusFilter, pageable));
     }
 
+    @GetMapping("/mine")
+    public MyPartiesResponse mine(@AuthenticationPrincipal Long userId) {
+        return partyService.getMyParties(userId);
+    }
+
     @GetMapping("/{id}")
     public PartyDetailResponse detail(@PathVariable Long id, @AuthenticationPrincipal Long userId) {
         return partyService.getDetail(id, userId);
@@ -79,6 +86,21 @@ public class PartyController {
     @DeleteMapping("/{id}/leave")
     public void leave(@PathVariable Long id, @AuthenticationPrincipal Long userId) {
         partyService.leave(id, userId);
+    }
+
+    @GetMapping("/{id}/join-requests")
+    public List<PartyJoinRequestResponse> joinRequests(@PathVariable Long id, @AuthenticationPrincipal Long userId) {
+        return partyService.getJoinRequests(id, userId);
+    }
+
+    @PostMapping("/{id}/join-requests/{memberId}/approve")
+    public void approveJoinRequest(@PathVariable Long id, @PathVariable Long memberId, @AuthenticationPrincipal Long userId) {
+        partyService.approveJoinRequest(id, memberId, userId);
+    }
+
+    @PostMapping("/{id}/join-requests/{memberId}/reject")
+    public void rejectJoinRequest(@PathVariable Long id, @PathVariable Long memberId, @AuthenticationPrincipal Long userId) {
+        partyService.rejectJoinRequest(id, memberId, userId);
     }
 
     private StudyParty.Status parseStatus(String status) {

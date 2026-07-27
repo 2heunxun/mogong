@@ -6,14 +6,22 @@ public record UserResponse(
         Long id,
         String nickname,
         String profileImageUrl,
-        String role
+        String role,
+        Integer classNo,
+        Integer teamNo,
+        String realName,
+        boolean profileCompleted
 ) {
     public static UserResponse from(User user) {
         return new UserResponse(
                 user.getId(),
                 user.getNickname(),
                 user.getProfileImageUrl(),
-                user.getRole().name()
+                user.getRole().name(),
+                user.getClassNo(),
+                user.getTeamNo(),
+                user.getRealName(),
+                user.isProfileCompleted()
         );
     }
 }

@@ -24,6 +24,9 @@ export default function Navbar() {
           </Link>
           {isAuthenticated ? (
             <>
+              <Link to="/my-parties" className="text-sm text-slate-600 hover:text-indigo-600">
+                내 파티
+              </Link>
               <Link
                 to="/parties/new"
                 className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700"

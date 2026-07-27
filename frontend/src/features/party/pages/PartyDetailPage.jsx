@@ -1,15 +1,25 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { deleteParty, fetchPartyDetail, fetchPartyMembers, joinParty, leaveParty } from '../api/parties';
+import {
+  approveJoinRequest,
+  deleteParty,
+  fetchJoinRequests,
+  fetchPartyDetail,
+  fetchPartyMembers,
+  joinParty,
+  leaveParty,
+  rejectJoinRequest,
+} from '../api/parties';
 import { useAuth } from '../../auth/hooks/useAuth';
 
 export default function PartyDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, initializing } = useAuth();
 
   const [party, setParty] = useState(null);
   const [members, setMembers] = useState([]);
+  const [joinRequests, setJoinRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [actionError, setActionError] = useState('');
@@ -22,12 +32,20 @@ export default function PartyDetailPage() {
       .then(([detail, memberList]) => {
         setParty(detail);
         setMembers(memberList);
+        if (detail.isOwner) {
+          return fetchJoinRequests(id).then(setJoinRequests);
+        }
+        setJoinRequests([]);
       })
       .catch(() => setError('공부파티 정보를 불러오지 못했습니다.'))
       .finally(() => setLoading(false));
   };
 
-  useEffect(load, [id]);
+  useEffect(() => {
+    if (initializing) return;
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, initializing, isAuthenticated]);
 
   const handleJoin = async () => {
     setActionError('');
@@ -36,7 +54,20 @@ export default function PartyDetailPage() {
       await joinParty(id);
       load();
     } catch (err) {
-      setActionError(err.response?.data?.message ?? '참여에 실패했습니다.');
+      setActionError(err.response?.data?.message ?? '참여 신청에 실패했습니다.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleCancelRequest = async () => {
+    setActionError('');
+    setActionLoading(true);
+    try {
+      await leaveParty(id);
+      load();
+    } catch (err) {
+      setActionError(err.response?.data?.message ?? '신청 취소에 실패했습니다.');
     } finally {
       setActionLoading(false);
     }
@@ -56,6 +87,20 @@ export default function PartyDetailPage() {
     }
   };
 
+  const handleReapply = async () => {
+    setActionError('');
+    setActionLoading(true);
+    try {
+      await leaveParty(id);
+      await joinParty(id);
+      load();
+    } catch (err) {
+      setActionError(err.response?.data?.message ?? '재신청에 실패했습니다.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   const handleDelete = async () => {
     if (!window.confirm('파티를 삭제하시겠습니까? 되돌릴 수 없습니다.')) return;
     setActionLoading(true);
@@ -68,12 +113,37 @@ export default function PartyDetailPage() {
     }
   };
 
+  const handleApproveRequest = async (memberId) => {
+    setActionError('');
+    setActionLoading(true);
+    try {
+      await approveJoinRequest(id, memberId);
+      load();
+    } catch (err) {
+      setActionError(err.response?.data?.message ?? '수락에 실패했습니다.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleRejectRequest = async (memberId) => {
+    setActionError('');
+    setActionLoading(true);
+    try {
+      await rejectJoinRequest(id, memberId);
+      load();
+    } catch (err) {
+      setActionError(err.response?.data?.message ?? '거절에 실패했습니다.');
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
   if (loading) return <p className="p-10 text-center text-slate-500">불러오는 중...</p>;
   if (error) return <p className="p-10 text-center text-red-500">{error}</p>;
   if (!party) return null;
 
-  const isFull = party.memberCount >= party.capacity;
-  const canJoin = isAuthenticated && !party.isMember && party.status === 'RECRUITING' && !isFull;
+  const canRequestJoin = isAuthenticated && !party.memberStatus && party.status === 'RECRUITING';
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
@@ -99,8 +169,8 @@ export default function PartyDetailPage() {
 
       {actionError && <p className="mb-4 text-sm text-red-500">{actionError}</p>}
 
-      <div className="mb-8 flex flex-wrap gap-2">
-        {party.isMember && party.openChatUrl && (
+      <div className="mb-8 flex flex-wrap items-center gap-2">
+        {party.memberStatus === 'APPROVED' && party.openChatUrl && (
           <a
             href={party.openChatUrl}
             target="_blank"
@@ -111,18 +181,50 @@ export default function PartyDetailPage() {
           </a>
         )}
 
-        {canJoin && (
+        {canRequestJoin && (
           <button
             type="button"
             onClick={handleJoin}
             disabled={actionLoading}
             className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
           >
-            참여하기
+            참여 신청하기
           </button>
         )}
 
-        {isAuthenticated && party.isMember && !party.isOwner && (
+        {party.memberStatus === 'PENDING' && (
+          <>
+            <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-700">
+              파티장 승인 대기중
+            </span>
+            <button
+              type="button"
+              onClick={handleCancelRequest}
+              disabled={actionLoading}
+              className="rounded-md border border-slate-300 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-50"
+            >
+              신청 취소
+            </button>
+          </>
+        )}
+
+        {party.memberStatus === 'REJECTED' && (
+          <>
+            <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-medium text-red-600">
+              참여 신청이 거절되었습니다
+            </span>
+            <button
+              type="button"
+              onClick={handleReapply}
+              disabled={actionLoading}
+              className="rounded-md border border-slate-300 px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 disabled:opacity-50"
+            >
+              다시 신청하기
+            </button>
+          </>
+        )}
+
+        {party.memberStatus === 'APPROVED' && !party.isOwner && (
           <button
             type="button"
             onClick={handleLeave}
@@ -161,6 +263,49 @@ export default function PartyDetailPage() {
           </Link>
         )}
       </div>
+
+      {party.isOwner && (
+        <div className="mb-8">
+          <h2 className="mb-3 text-lg font-semibold text-slate-900">참여 신청 관리 ({joinRequests.length})</h2>
+          {joinRequests.length === 0 ? (
+            <p className="rounded-md border border-dashed border-slate-300 px-4 py-6 text-center text-sm text-slate-400">
+              대기중인 참여 신청이 없습니다.
+            </p>
+          ) : (
+            <ul className="flex flex-col gap-2">
+              {joinRequests.map((r) => (
+                <li
+                  key={r.id}
+                  className="flex items-center justify-between rounded-md border border-slate-200 bg-white px-4 py-2 text-sm"
+                >
+                  <span className="text-slate-700">{r.nickname}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-slate-400">
+                      {new Date(r.requestedAt).toLocaleDateString('ko-KR')} 신청
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleApproveRequest(r.id)}
+                      disabled={actionLoading}
+                      className="rounded-md bg-indigo-600 px-3 py-1 text-xs font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+                    >
+                      수락
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleRejectRequest(r.id)}
+                      disabled={actionLoading}
+                      className="rounded-md border border-slate-300 px-3 py-1 text-xs text-slate-600 hover:bg-slate-50 disabled:opacity-50"
+                    >
+                      거절
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
 
       <div>
         <h2 className="mb-3 text-lg font-semibold text-slate-900">파티원 ({members.length})</h2>
