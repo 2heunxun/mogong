@@ -1,12 +1,12 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import ProtectedRoute from './components/ProtectedRoute';
-import { AuthProvider } from './hooks/useAuth';
-import KakaoCallbackPage from './pages/KakaoCallbackPage';
-import LoginPage from './pages/LoginPage';
-import PartyDetailPage from './pages/PartyDetailPage';
-import PartyFormPage from './pages/PartyFormPage';
-import PartyListPage from './pages/PartyListPage';
+import Navbar from './shared/components/Navbar';
+import ProtectedRoute from './features/auth/components/ProtectedRoute';
+import { AuthProvider } from './features/auth/hooks/useAuth';
+import KakaoCallbackPage from './features/auth/pages/KakaoCallbackPage';
+import LoginPage from './features/auth/pages/LoginPage';
+import PartyDetailPage from './features/party/pages/PartyDetailPage';
+import PartyFormPage from './features/party/pages/PartyFormPage';
+import PartyListPage from './features/party/pages/PartyListPage';
 
 export default function App() {
   return (

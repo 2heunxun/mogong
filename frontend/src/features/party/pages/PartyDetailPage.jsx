@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { deleteParty, fetchPartyDetail, fetchPartyMembers, joinParty, leaveParty } from '../api/parties';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../../auth/hooks/useAuth';
 
 export default function PartyDetailPage() {
   const { id } = useParams();

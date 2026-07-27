@@ -1,4 +1,4 @@
-import { api } from './client';
+import { api } from '../../../shared/api/client';
 
 export const fetchParties = (params) => api.get('/api/parties', { params }).then((res) => res.data);
 

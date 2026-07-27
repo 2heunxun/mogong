@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { api } from '../api/client';
-import { clearTokens, getRefreshToken, setAccessToken, setRefreshToken } from '../api/tokenStore';
+import { api } from '../../../shared/api/client';
+import { clearTokens, getRefreshToken, setAccessToken, setRefreshToken } from '../../../shared/api/tokenStore';
 
 const AuthContext = createContext(null);
 
