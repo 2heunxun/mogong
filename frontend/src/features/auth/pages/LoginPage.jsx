@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { fetchKakaoLoginUrl } from '../api/auth';
 import { useAuth } from '../hooks/useAuth';
+import logoFull from '../../../assets/logo-full.png';
 
 export default function LoginPage() {
   const { devLogin } = useAuth();
@@ -43,6 +44,7 @@ export default function LoginPage() {
   return (
     <div className="mx-auto flex max-w-sm flex-col gap-6 px-4 py-16">
       <div className="text-center">
+        <img src={logoFull} alt="모공" className="mx-auto mb-2 h-32 w-auto" />
         <h1 className="text-2xl font-bold text-slate-900">모공에 로그인</h1>
         <p className="mt-1 text-sm text-slate-500">모아봐요 공부팀!</p>
       </div>

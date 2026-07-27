@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../features/auth/hooks/useAuth';
+import logoMark from '../../assets/logo-mark.png';
 
 export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
@@ -13,7 +14,8 @@ export default function Navbar() {
   return (
     <header className="border-b border-slate-200 bg-white">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-        <Link to="/" className="text-xl font-bold text-indigo-600">
+        <Link to="/" className="flex items-center gap-2 text-xl font-bold text-indigo-600">
+          <img src={logoMark} alt="모공 로고" className="h-8 w-8" />
           모공
         </Link>
         <nav className="flex items-center gap-3">
