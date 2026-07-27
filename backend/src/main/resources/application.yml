@@ -1,6 +1,6 @@
 spring:
   profiles:
-    default: local
+    default: prod
   application:
     name: moa-study-backend
   jpa:
@@ -18,7 +18,7 @@ server:
   port: ${PORT:8080}
 
 jwt:
-  secret: ${JWT_SECRET:local-dev-only-secret-key-change-me-in-production-32bytes+}
+  secret: ${JWT_SECRET}
   access-token-expiration: ${JWT_ACCESS_EXPIRATION:1800000}
   refresh-token-expiration: ${JWT_REFRESH_EXPIRATION:1209600000}
 
@@ -33,29 +33,15 @@ cors:
 app:
   dev-login-enabled: ${DEV_LOGIN_ENABLED:false}
 
----
-spring:
-  config:
-    activate:
-      on-profile: local
-  datasource:
-    url: jdbc:h2:file:./data/moa_study;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;NON_KEYWORDS=USER
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
-  jpa:
-    show-sql: true
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
-
-app:
-  dev-login-enabled: true
-
-logging:
-  level:
-    com.moa.backend: debug
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: alpha
+    tags-sorter: alpha
+    doc-expansion: none
+    display-request-duration: true
+  api-docs:
+    path: /v3/api-docs
 
 ---
 spring:
@@ -69,3 +55,9 @@ spring:
 
 app:
   dev-login-enabled: false
+
+springdoc:
+  swagger-ui:
+    enabled: false
+  api-docs:
+    enabled: false
