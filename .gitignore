@@ -11,3 +11,6 @@ Thumbs.db
 
 # backend/, frontend/ 각각에 자체 .gitignore가 있습니다
 # (build 산출물, node_modules, 로컬 DB 파일, .env 등)
+
+### 루트에서 잘못 실행했을 때 생기는 로컬 DB 파일 방지 ###
+/data/
