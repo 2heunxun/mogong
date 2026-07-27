@@ -59,7 +59,11 @@ public class User extends BaseTimeEntity {
     }
 
     public void updateProfile(String nickname, String profileImageUrl) {
-        this.nickname = nickname;
+        // 온보딩을 완료하면 닉네임은 "N반_N조_이름" 형식으로 고정되므로,
+        // 재로그인 시 카카오 닉네임으로 덮어쓰지 않는다.
+        if (!profileCompleted) {
+            this.nickname = nickname;
+        }
         this.profileImageUrl = profileImageUrl;
     }
 
@@ -67,6 +71,7 @@ public class User extends BaseTimeEntity {
         this.classNo = classNo;
         this.teamNo = teamNo;
         this.realName = realName;
+        this.nickname = classNo + "반_" + teamNo + "조_" + realName;
         this.profileCompleted = true;
     }
 
