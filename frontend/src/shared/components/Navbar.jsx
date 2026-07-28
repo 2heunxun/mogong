@@ -1,10 +1,39 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../features/auth/hooks/useAuth';
 import logoMark from '../../assets/logo-mark.png';
+
+const SECTIONS = {
+  study: { tabLabel: '공부파티', tabTo: '/', myLabel: '내 파티', myTo: '/my-parties', newLabel: '파티 만들기', newTo: '/parties/new' },
+  dinner: {
+    tabLabel: '저녁팟',
+    tabTo: '/dinner-parties',
+    myLabel: '내 저녁팟',
+    myTo: '/my-dinner-parties',
+    newLabel: '저녁팟 만들기',
+    newTo: '/dinner-parties/new',
+  },
+  weekend: {
+    tabLabel: '주말팟',
+    tabTo: '/weekend-parties',
+    myLabel: '내 주말팟',
+    myTo: '/my-weekend-parties',
+    newLabel: '주말팟 만들기',
+    newTo: '/weekend-parties/new',
+  },
+};
+
+function getActiveSection(pathname) {
+  if (pathname.startsWith('/dinner-parties') || pathname === '/my-dinner-parties') return 'dinner';
+  if (pathname.startsWith('/weekend-parties') || pathname === '/my-weekend-parties') return 'weekend';
+  return 'study';
+}
 
 export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const activeSection = getActiveSection(location.pathname);
+  const current = SECTIONS[activeSection];
 
   const handleLogout = async () => {
     await logout();
@@ -18,20 +47,32 @@ export default function Navbar() {
           <img src={logoMark} alt="모공 로고" className="h-8 w-8" />
           모공
         </Link>
+
+        <nav className="flex items-center gap-1 rounded-md bg-slate-100 p-1">
+          {Object.entries(SECTIONS).map(([key, section]) => (
+            <Link
+              key={key}
+              to={section.tabTo}
+              className={`rounded-md px-3 py-1.5 text-sm font-medium ${
+                activeSection === key ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-indigo-600'
+              }`}
+            >
+              {section.tabLabel}
+            </Link>
+          ))}
+        </nav>
+
         <nav className="flex items-center gap-3">
-          <Link to="/" className="text-sm text-slate-600 hover:text-indigo-600">
-            파티 목록
-          </Link>
           {isAuthenticated ? (
             <>
-              <Link to="/my-parties" className="text-sm text-slate-600 hover:text-indigo-600">
-                내 파티
+              <Link to={current.myTo} className="text-sm text-slate-600 hover:text-indigo-600">
+                {current.myLabel}
               </Link>
               <Link
-                to="/parties/new"
+                to={current.newTo}
                 className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700"
               >
-                파티 만들기
+                {current.newLabel}
               </Link>
               <span className="text-sm text-slate-500">{user.nickname}님</span>
               <button
