@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import LoadingSpinner from '../../../shared/components/LoadingSpinner';
 import { fetchWeekendParties } from '../api/weekendParties';
 import WeekendPartyCard from '../components/WeekendPartyCard';
 import { CATEGORIES } from '../constants/categories';
@@ -91,7 +92,7 @@ export default function WeekendPartyListPage() {
         </form>
       </div>
 
-      {loading && <p className="text-slate-500">불러오는 중...</p>}
+      {loading && <LoadingSpinner />}
       {error && <p className="text-red-500">{error}</p>}
 
       {!loading && !error && data.content.length === 0 && (
@@ -101,8 +102,8 @@ export default function WeekendPartyListPage() {
       )}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {data.content.map((party) => (
-          <WeekendPartyCard key={party.id} party={party} />
+        {data.content.map((party, index) => (
+          <WeekendPartyCard key={party.id} party={party} index={index} />
         ))}
       </div>
 

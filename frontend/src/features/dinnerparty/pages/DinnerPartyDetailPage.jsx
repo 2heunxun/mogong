@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import LoadingSpinner from '../../../shared/components/LoadingSpinner';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   approveDinnerPartyJoinRequest,
@@ -139,18 +140,28 @@ export default function DinnerPartyDetailPage() {
     }
   };
 
-  if (loading) return <p className="p-10 text-center text-slate-500">불러오는 중...</p>;
+  if (loading) return <LoadingSpinner />;
   if (error) return <p className="p-10 text-center text-red-500">{error}</p>;
   if (!party) return null;
 
   const canRequestJoin = isAuthenticated && !party.memberStatus && party.status === 'RECRUITING';
+  const isFirstCome = party.recruitmentType === 'FIRST_COME';
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
       <div className="mb-4 flex items-center justify-between">
-        <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-600">
-          {party.location}
-        </span>
+        <div className="flex items-center gap-1">
+          <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-600">
+            {party.location}
+          </span>
+          <span
+            className={`rounded-full px-3 py-1 text-xs font-medium ${
+              isFirstCome ? 'bg-amber-50 text-amber-600' : 'bg-sky-50 text-sky-600'
+            }`}
+          >
+            {isFirstCome ? '선착순' : '승인제'}
+          </span>
+        </div>
         <span
           className={`rounded-full px-3 py-1 text-xs font-medium ${
             party.status === 'RECRUITING' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600'
@@ -176,7 +187,7 @@ export default function DinnerPartyDetailPage() {
             href={party.openChatUrl}
             target="_blank"
             rel="noreferrer"
-            className="rounded-md bg-[#FEE500] px-4 py-2 text-sm font-semibold text-[#191600] hover:brightness-95"
+            className="rounded-md bg-[#FEE500] px-4 py-2 text-sm font-semibold text-[#191600] hover:brightness-95 transition-transform duration-150 hover:scale-[1.02] active:scale-95"
           >
             오픈채팅 입장하기
           </a>
@@ -187,9 +198,9 @@ export default function DinnerPartyDetailPage() {
             type="button"
             onClick={handleJoin}
             disabled={actionLoading}
-            className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+            className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50 transition-transform duration-150 hover:scale-[1.02] active:scale-95"
           >
-            참여 신청하기
+            {isFirstCome ? '참여하기' : '참여 신청하기'}
           </button>
         )}
 
@@ -248,7 +259,7 @@ export default function DinnerPartyDetailPage() {
               type="button"
               onClick={handleDelete}
               disabled={actionLoading}
-              className="rounded-md border border-red-200 px-4 py-2 text-sm text-red-500 hover:bg-red-50 disabled:opacity-50"
+              className="rounded-md border border-red-200 px-4 py-2 text-sm text-red-500 hover:bg-red-50 disabled:opacity-50 transition-transform duration-150 hover:scale-[1.02] active:scale-95"
             >
               삭제
             </button>
@@ -258,14 +269,14 @@ export default function DinnerPartyDetailPage() {
         {!isAuthenticated && (
           <Link
             to="/login"
-            className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+            className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition-transform duration-150 hover:scale-[1.02] active:scale-95"
           >
             로그인 후 참여하기
           </Link>
         )}
       </div>
 
-      {party.isOwner && (
+      {party.isOwner && !isFirstCome && (
         <div className="mb-8">
           <h2 className="mb-3 text-lg font-semibold text-slate-900">참여 신청 관리 ({joinRequests.length})</h2>
           {joinRequests.length === 0 ? (
@@ -288,7 +299,7 @@ export default function DinnerPartyDetailPage() {
                       type="button"
                       onClick={() => handleApproveRequest(r.id)}
                       disabled={actionLoading}
-                      className="rounded-md bg-indigo-600 px-3 py-1 text-xs font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+                      className="rounded-md bg-indigo-600 px-3 py-1 text-xs font-medium text-white hover:bg-indigo-700 disabled:opacity-50 transition-transform duration-150 hover:scale-[1.02] active:scale-95"
                     >
                       수락
                     </button>
@@ -296,7 +307,7 @@ export default function DinnerPartyDetailPage() {
                       type="button"
                       onClick={() => handleRejectRequest(r.id)}
                       disabled={actionLoading}
-                      className="rounded-md border border-slate-300 px-3 py-1 text-xs text-slate-600 hover:bg-slate-50 disabled:opacity-50"
+                      className="rounded-md border border-slate-300 px-3 py-1 text-xs text-slate-600 hover:bg-slate-50 disabled:opacity-50 transition-transform duration-150 hover:scale-[1.02] active:scale-95"
                     >
                       거절
                     </button>

@@ -42,18 +42,18 @@ export default function Navbar() {
 
   return (
     <header className="border-b border-slate-200 bg-white">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
+      <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3 md:flex-nowrap md:justify-between">
         <Link to="/" className="flex items-center gap-2 text-xl font-bold text-indigo-600">
           <img src={logoMark} alt="모공 로고" className="h-8 w-8" />
           모공
         </Link>
 
-        <nav className="flex items-center gap-1 rounded-md bg-slate-100 p-1">
+        <nav className="order-3 flex w-full items-center gap-1 overflow-x-auto rounded-md bg-slate-100 p-1 md:order-none md:w-auto md:overflow-visible">
           {Object.entries(SECTIONS).map(([key, section]) => (
             <Link
               key={key}
               to={section.tabTo}
-              className={`rounded-md px-3 py-1.5 text-sm font-medium ${
+              className={`shrink-0 rounded-md px-3 py-1.5 text-sm font-medium ${
                 activeSection === key ? 'bg-white text-indigo-600 shadow-sm' : 'text-slate-500 hover:text-indigo-600'
               }`}
             >
@@ -62,19 +62,25 @@ export default function Navbar() {
           ))}
         </nav>
 
-        <nav className="flex items-center gap-3">
+        <nav className="ml-auto flex items-center gap-2 sm:gap-3 md:ml-0">
           {isAuthenticated ? (
             <>
-              <Link to={current.myTo} className="text-sm text-slate-600 hover:text-indigo-600">
+              <Link to={current.myTo} className="hidden text-sm text-slate-600 hover:text-indigo-600 sm:inline">
                 {current.myLabel}
               </Link>
               <Link
                 to={current.newTo}
-                className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700"
+                className="rounded-md bg-indigo-600 px-2.5 py-1.5 text-xs font-medium text-white hover:bg-indigo-700 sm:px-3 sm:text-sm transition-transform duration-150 hover:scale-[1.02] active:scale-95"
               >
                 {current.newLabel}
               </Link>
-              <span className="text-sm text-slate-500">{user.nickname}님</span>
+              <Link
+                to="/profile/edit"
+                className="max-w-[6rem] truncate text-sm text-slate-500 hover:text-indigo-600 sm:max-w-[10rem]"
+                title={`${user.nickname}님 (클릭해서 정보 수정)`}
+              >
+                {user.nickname}님
+              </Link>
               <button
                 type="button"
                 onClick={handleLogout}
@@ -86,7 +92,7 @@ export default function Navbar() {
           ) : (
             <Link
               to="/login"
-              className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700"
+              className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700 transition-transform duration-150 hover:scale-[1.02] active:scale-95"
             >
               로그인
             </Link>

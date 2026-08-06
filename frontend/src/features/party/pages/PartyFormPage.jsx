@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import LoadingSpinner from '../../../shared/components/LoadingSpinner';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createParty, fetchPartyDetail, updateParty } from '../api/parties';
 import { CATEGORIES } from '../constants/categories';
@@ -9,6 +10,7 @@ const emptyForm = {
   category: CATEGORIES[0],
   capacity: 4,
   openChatUrl: '',
+  recruitmentType: 'APPROVAL',
 };
 
 export default function PartyFormPage() {
@@ -35,6 +37,7 @@ export default function PartyFormPage() {
           category: party.category,
           capacity: party.capacity,
           openChatUrl: party.openChatUrl ?? '',
+          recruitmentType: party.recruitmentType,
         });
       })
       .catch(() => setError('파티 정보를 불러오지 못했습니다.'))
@@ -72,7 +75,7 @@ export default function PartyFormPage() {
     }
   };
 
-  if (loading) return <p className="p-10 text-center text-slate-500">불러오는 중...</p>;
+  if (loading) return <LoadingSpinner />;
 
   return (
     <div className="mx-auto max-w-xl px-4 py-8">
@@ -102,6 +105,34 @@ export default function PartyFormPage() {
             className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none"
           />
         </div>
+
+        {!isEdit && (
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-700">모집 방식</label>
+            <div className="flex gap-4">
+              <label className="flex items-center gap-1.5 text-sm text-slate-700">
+                <input
+                  type="radio"
+                  name="recruitmentType"
+                  value="APPROVAL"
+                  checked={form.recruitmentType === 'APPROVAL'}
+                  onChange={handleChange('recruitmentType')}
+                />
+                승인제 (신청 후 파티장이 수락)
+              </label>
+              <label className="flex items-center gap-1.5 text-sm text-slate-700">
+                <input
+                  type="radio"
+                  name="recruitmentType"
+                  value="FIRST_COME"
+                  checked={form.recruitmentType === 'FIRST_COME'}
+                  onChange={handleChange('recruitmentType')}
+                />
+                선착순 (정원 차면 자동 마감)
+              </label>
+            </div>
+          </div>
+        )}
 
         <div className="flex gap-4">
           <div className="flex-1">
@@ -152,7 +183,7 @@ export default function PartyFormPage() {
         <button
           type="submit"
           disabled={submitting}
-          className="mt-2 rounded-md bg-indigo-600 py-2.5 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+          className="mt-2 rounded-md bg-indigo-600 py-2.5 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50 transition-transform duration-150 hover:scale-[1.02] active:scale-95"
         >
           {submitting ? '저장 중...' : isEdit ? '수정 완료' : '파티 만들기'}
         </button>

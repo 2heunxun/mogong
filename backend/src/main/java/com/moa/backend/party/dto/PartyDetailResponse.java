@@ -15,6 +15,7 @@ public record PartyDetailResponse(
         @Schema(description = "모집 정원") Integer capacity,
         @Schema(description = "현재 승인된(APPROVED) 파티원 수") long memberCount,
         @Schema(description = "모집 상태", allowableValues = {"RECRUITING", "CLOSED"}) String status,
+        @Schema(description = "모집 방식", allowableValues = {"FIRST_COME", "APPROVAL"}) String recruitmentType,
         @Schema(description = "파티장 정보") UserResponse owner,
 
         @Schema(description = "요청자 본인이 이 파티의 파티장인지 여부. 비로그인 요청이면 항상 false.")
@@ -45,6 +46,7 @@ public record PartyDetailResponse(
                 party.getCapacity(),
                 memberCount,
                 party.getStatus().name(),
+                party.getRecruitmentType().name(),
                 UserResponse.from(party.getOwner()),
                 isOwner,
                 memberStatus == null ? null : memberStatus.name(),

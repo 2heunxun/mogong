@@ -1,5 +1,8 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { BrowserRouter, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import Navbar from './shared/components/Navbar';
+import IntroScreen from './shared/components/IntroScreen';
 import ProtectedRoute from './features/auth/components/ProtectedRoute';
 import { AuthProvider } from './features/auth/hooks/useAuth';
 import KakaoCallbackPage from './features/auth/pages/KakaoCallbackPage';
@@ -18,14 +21,38 @@ import WeekendPartyFormPage from './features/weekendparty/pages/WeekendPartyForm
 import WeekendPartyListPage from './features/weekendparty/pages/WeekendPartyListPage';
 import OnboardingGuard from './features/user/components/OnboardingGuard';
 import OnboardingPage from './features/user/pages/OnboardingPage';
+import ProfileEditPage from './features/user/pages/ProfileEditPage';
 
-export default function App() {
+const INTRO_STORAGE_KEY = 'mogong-intro-shown';
+
+function AppContent() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [showIntro, setShowIntro] = useState(() => !sessionStorage.getItem(INTRO_STORAGE_KEY));
+
+  const handleIntroFinish = () => {
+    sessionStorage.setItem(INTRO_STORAGE_KEY, '1');
+    setShowIntro(false);
+    if (location.pathname !== '/') {
+      navigate('/', { replace: true });
+    }
+  };
+
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <Navbar />
-        <OnboardingGuard>
-          <Routes>
+    <>
+      <AnimatePresence>{showIntro && <IntroScreen onFinish={handleIntroFinish} />}</AnimatePresence>
+
+      <Navbar />
+      <OnboardingGuard>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+          >
+            <Routes location={location}>
             <Route path="/" element={<PartyListPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/auth/kakao/callback" element={<KakaoCallbackPage />} />
@@ -34,6 +61,14 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <OnboardingPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile/edit"
+              element={
+                <ProtectedRoute>
+                  <ProfileEditPage />
                 </ProtectedRoute>
               }
             />
@@ -114,8 +149,19 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
-          </Routes>
-        </OnboardingGuard>
+            </Routes>
+          </motion.div>
+        </AnimatePresence>
+      </OnboardingGuard>
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <AppContent />
       </AuthProvider>
     </BrowserRouter>
   );

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import LoadingSpinner from '../../../shared/components/LoadingSpinner';
 import { fetchMyWeekendParties } from '../api/weekendParties';
 import WeekendPartyCard from '../components/WeekendPartyCard';
 
@@ -33,7 +34,7 @@ export default function MyWeekendPartiesPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <p className="p-10 text-center text-slate-500">불러오는 중...</p>;
+  if (loading) return <LoadingSpinner />;
   if (error) return <p className="p-10 text-center text-red-500">{error}</p>;
 
   return (

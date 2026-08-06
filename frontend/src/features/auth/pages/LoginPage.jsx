@@ -52,7 +52,7 @@ export default function LoginPage() {
       <button
         type="button"
         onClick={handleKakaoLogin}
-        className="flex items-center justify-center gap-2 rounded-md bg-[#FEE500] py-3 text-sm font-semibold text-[#191600] hover:brightness-95"
+        className="flex items-center justify-center gap-2 rounded-md bg-[#FEE500] py-3 text-sm font-semibold text-[#191600] hover:brightness-95 transition-transform duration-150 hover:scale-[1.02] active:scale-95"
       >
         카카오로 시작하기
       </button>

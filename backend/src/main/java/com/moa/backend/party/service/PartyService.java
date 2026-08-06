@@ -93,6 +93,7 @@ public class PartyService {
                 .category(request.category())
                 .capacity(request.capacity())
                 .openChatUrl(request.openChatUrl())
+                .recruitmentType(request.recruitmentType())
                 .build());
 
         partyMemberRepository.save(PartyMember.builder()
@@ -131,7 +132,16 @@ public class PartyService {
             throw new BusinessException(ErrorCode.ALREADY_JOINED);
         }
 
-        partyMemberRepository.save(PartyMember.builder().party(party).user(user).status(PartyMember.Status.PENDING).build());
+        if (party.isFirstCome()) {
+            long approvedCount = partyMemberRepository.countByPartyIdAndStatus(partyId, PartyMember.Status.APPROVED);
+            if (approvedCount >= party.getCapacity()) {
+                throw new BusinessException(ErrorCode.PARTY_FULL);
+            }
+            partyMemberRepository.save(PartyMember.builder().party(party).user(user).status(PartyMember.Status.APPROVED).build());
+            syncStatus(party);
+        } else {
+            partyMemberRepository.save(PartyMember.builder().party(party).user(user).status(PartyMember.Status.PENDING).build());
+        }
     }
 
     @Transactional
@@ -146,6 +156,7 @@ public class PartyService {
         }
 
         member.approve();
+        syncStatus(party);
     }
 
     @Transactional
@@ -169,6 +180,16 @@ public class PartyService {
         }
 
         partyMemberRepository.deleteByPartyIdAndUserId(partyId, userId);
+        syncStatus(party);
+    }
+
+    private void syncStatus(StudyParty party) {
+        long approvedCount = partyMemberRepository.countByPartyIdAndStatus(party.getId(), PartyMember.Status.APPROVED);
+        if (approvedCount >= party.getCapacity() && party.isRecruiting()) {
+            party.close();
+        } else if (approvedCount < party.getCapacity() && !party.isRecruiting()) {
+            party.reopen();
+        }
     }
 
     private PartySummaryResponse toSummary(StudyParty party) {

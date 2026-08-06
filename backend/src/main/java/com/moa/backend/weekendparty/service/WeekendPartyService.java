@@ -94,6 +94,7 @@ public class WeekendPartyService {
                 .meetingAt(request.meetingAt())
                 .capacity(request.capacity())
                 .openChatUrl(request.openChatUrl())
+                .recruitmentType(request.recruitmentType())
                 .build());
 
         weekendPartyMemberRepository.save(WeekendPartyMember.builder()
@@ -133,7 +134,16 @@ public class WeekendPartyService {
             throw new BusinessException(ErrorCode.WEEKEND_ALREADY_JOINED);
         }
 
-        weekendPartyMemberRepository.save(WeekendPartyMember.builder().party(party).user(user).status(WeekendPartyMember.Status.PENDING).build());
+        if (party.isFirstCome()) {
+            long approvedCount = weekendPartyMemberRepository.countByPartyIdAndStatus(partyId, WeekendPartyMember.Status.APPROVED);
+            if (approvedCount >= party.getCapacity()) {
+                throw new BusinessException(ErrorCode.WEEKEND_PARTY_FULL);
+            }
+            weekendPartyMemberRepository.save(WeekendPartyMember.builder().party(party).user(user).status(WeekendPartyMember.Status.APPROVED).build());
+            syncStatus(party);
+        } else {
+            weekendPartyMemberRepository.save(WeekendPartyMember.builder().party(party).user(user).status(WeekendPartyMember.Status.PENDING).build());
+        }
     }
 
     @Transactional
@@ -148,6 +158,7 @@ public class WeekendPartyService {
         }
 
         member.approve();
+        syncStatus(party);
     }
 
     @Transactional
@@ -171,6 +182,16 @@ public class WeekendPartyService {
         }
 
         weekendPartyMemberRepository.deleteByPartyIdAndUserId(partyId, userId);
+        syncStatus(party);
+    }
+
+    private void syncStatus(WeekendParty party) {
+        long approvedCount = weekendPartyMemberRepository.countByPartyIdAndStatus(party.getId(), WeekendPartyMember.Status.APPROVED);
+        if (approvedCount >= party.getCapacity() && party.isRecruiting()) {
+            party.close();
+        } else if (approvedCount < party.getCapacity() && !party.isRecruiting()) {
+            party.reopen();
+        }
     }
 
     private WeekendPartySummaryResponse toSummary(WeekendParty party) {

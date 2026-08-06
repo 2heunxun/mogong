@@ -4,13 +4,13 @@ import { useAuth } from '../../auth/hooks/useAuth';
 
 const CLASS_OPTIONS = Array.from({ length: 10 }, (_, i) => i + 1);
 
-export default function OnboardingPage() {
-  const { completeOnboarding } = useAuth();
+export default function ProfileEditPage() {
+  const { user, completeOnboarding } = useAuth();
   const navigate = useNavigate();
 
-  const [classNo, setClassNo] = useState('');
-  const [teamNo, setTeamNo] = useState('');
-  const [realName, setRealName] = useState('');
+  const [classNo, setClassNo] = useState(String(user?.classNo ?? ''));
+  const [teamNo, setTeamNo] = useState(String(user?.teamNo ?? ''));
+  const [realName, setRealName] = useState(user?.realName ?? '');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
@@ -40,8 +40,8 @@ export default function OnboardingPage() {
   return (
     <div className="mx-auto flex max-w-sm flex-col gap-6 px-4 py-16">
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-slate-900">회원가입 완료하기</h1>
-        <p className="mt-1 text-sm text-slate-500">모공 이용을 위해 반/조/이름을 입력해주세요.</p>
+        <h1 className="text-2xl font-bold text-slate-900">내 정보 수정</h1>
+        <p className="mt-1 text-sm text-slate-500">반/조/이름을 수정할 수 있어요.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -97,7 +97,7 @@ export default function OnboardingPage() {
           disabled={submitting}
           className="mt-2 rounded-md bg-indigo-600 py-2.5 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50 transition-transform duration-150 hover:scale-[1.02] active:scale-95"
         >
-          {submitting ? '저장 중...' : '가입 완료'}
+          {submitting ? '저장 중...' : '저장하기'}
         </button>
       </form>
     </div>

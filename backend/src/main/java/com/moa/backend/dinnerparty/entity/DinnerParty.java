@@ -57,9 +57,13 @@ public class DinnerParty extends BaseTimeEntity {
     @Column(name = "open_chat_url", nullable = false, length = 500)
     private String openChatUrl;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "recruitment_type", nullable = false, length = 20)
+    private RecruitmentType recruitmentType;
+
     @Builder
     private DinnerParty(User owner, String title, String description, String location, LocalDateTime meetingAt,
-                         Integer capacity, String openChatUrl) {
+                         Integer capacity, String openChatUrl, RecruitmentType recruitmentType) {
         this.owner = owner;
         this.title = title;
         this.description = description;
@@ -67,6 +71,7 @@ public class DinnerParty extends BaseTimeEntity {
         this.meetingAt = meetingAt;
         this.capacity = capacity;
         this.openChatUrl = openChatUrl;
+        this.recruitmentType = recruitmentType;
         this.status = Status.RECRUITING;
     }
 
@@ -94,7 +99,23 @@ public class DinnerParty extends BaseTimeEntity {
         }
     }
 
+    public void close() {
+        this.status = Status.CLOSED;
+    }
+
+    public void reopen() {
+        this.status = Status.RECRUITING;
+    }
+
+    public boolean isFirstCome() {
+        return this.recruitmentType == RecruitmentType.FIRST_COME;
+    }
+
     public enum Status {
         RECRUITING, CLOSED
+    }
+
+    public enum RecruitmentType {
+        FIRST_COME, APPROVAL
     }
 }

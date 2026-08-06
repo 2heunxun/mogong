@@ -94,6 +94,7 @@ public class DinnerPartyService {
                 .meetingAt(request.meetingAt())
                 .capacity(request.capacity())
                 .openChatUrl(request.openChatUrl())
+                .recruitmentType(request.recruitmentType())
                 .build());
 
         dinnerPartyMemberRepository.save(DinnerPartyMember.builder()
@@ -133,7 +134,16 @@ public class DinnerPartyService {
             throw new BusinessException(ErrorCode.DINNER_ALREADY_JOINED);
         }
 
-        dinnerPartyMemberRepository.save(DinnerPartyMember.builder().party(party).user(user).status(DinnerPartyMember.Status.PENDING).build());
+        if (party.isFirstCome()) {
+            long approvedCount = dinnerPartyMemberRepository.countByPartyIdAndStatus(partyId, DinnerPartyMember.Status.APPROVED);
+            if (approvedCount >= party.getCapacity()) {
+                throw new BusinessException(ErrorCode.DINNER_PARTY_FULL);
+            }
+            dinnerPartyMemberRepository.save(DinnerPartyMember.builder().party(party).user(user).status(DinnerPartyMember.Status.APPROVED).build());
+            syncStatus(party);
+        } else {
+            dinnerPartyMemberRepository.save(DinnerPartyMember.builder().party(party).user(user).status(DinnerPartyMember.Status.PENDING).build());
+        }
     }
 
     @Transactional
@@ -148,6 +158,7 @@ public class DinnerPartyService {
         }
 
         member.approve();
+        syncStatus(party);
     }
 
     @Transactional
@@ -171,6 +182,16 @@ public class DinnerPartyService {
         }
 
         dinnerPartyMemberRepository.deleteByPartyIdAndUserId(partyId, userId);
+        syncStatus(party);
+    }
+
+    private void syncStatus(DinnerParty party) {
+        long approvedCount = dinnerPartyMemberRepository.countByPartyIdAndStatus(party.getId(), DinnerPartyMember.Status.APPROVED);
+        if (approvedCount >= party.getCapacity() && party.isRecruiting()) {
+            party.close();
+        } else if (approvedCount < party.getCapacity() && !party.isRecruiting()) {
+            party.reopen();
+        }
     }
 
     private DinnerPartySummaryResponse toSummary(DinnerParty party) {

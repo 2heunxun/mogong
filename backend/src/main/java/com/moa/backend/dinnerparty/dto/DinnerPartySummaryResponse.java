@@ -13,6 +13,7 @@ public record DinnerPartySummaryResponse(
         @Schema(description = "모집 정원") Integer capacity,
         @Schema(description = "현재 승인된(APPROVED) 파티원 수. 대기중인 신청자는 포함하지 않는다.") long memberCount,
         @Schema(description = "모집 상태", allowableValues = {"RECRUITING", "CLOSED"}) String status,
+        @Schema(description = "모집 방식", allowableValues = {"FIRST_COME", "APPROVAL"}) String recruitmentType,
         @Schema(description = "파티장 닉네임") String ownerNickname,
         @Schema(description = "생성 시각") LocalDateTime createdAt
 ) {
@@ -25,6 +26,7 @@ public record DinnerPartySummaryResponse(
                 party.getCapacity(),
                 memberCount,
                 party.getStatus().name(),
+                party.getRecruitmentType().name(),
                 party.getOwner().getNickname(),
                 party.getCreatedAt()
         );
